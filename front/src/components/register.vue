@@ -14,8 +14,8 @@
             <FormItem label="密码" prop="password">
                 <Input  type="password" v-model="formCustom.password"></Input>
             </FormItem>
-            <FormItem label="重复密码" prop="password">
-                <Input  type="password2" v-model="formCustom.password2"></Input>
+            <FormItem label="重复密码" prop="password2">
+                <Input  type="password" v-model="formCustom.password2"></Input>
             </FormItem>
         </Form>
     </Modal>
@@ -54,21 +54,45 @@
                 })
             },
             handleSubmit(name) {
-                this.$refs[name].validate((valid) => {
+                let that = this;
+                that.$refs[name].validate((valid) => {
                     if (valid) {
-                        this.$Message.success('注册成功，即将返回登陆!');
-                        setTimeout(() => {
-                            this.$router.push({
-                                name : 'login'
-                            })
-                        },1000)
+                        let postData = that.formCustom;
+                        let qs = require('qs');
+                        that.axios({
+                            url:'/api/register',
+                            method:'post',
+                            data:qs.stringify(postData)
+                        })
+                        .then(res=>{
+                            let needData = res.data;
+                            if (needData.code == 200) {
+                                that.$Message.success('注册成功，即将返回登陆!');
+                                setTimeout(() => {
+                                    that.$router.push({
+                                        name : 'login'
+                                    })
+                                },1000)                               
+                            } else {
+                                that.$Message.error(needData.msg);
+                                setTimeout(() => {
+                                    that.loading = false;
+                                    that.$nextTick(() => {
+                                        that.loading = true
+                                    })
+                                },1000)
+                            }
+                        })
+                        .catch(err=>{
+                            that.$Message.error('网络请求异常');
+                        })
 
                     } else {
-                        this.$Message.error('表单验证失败!');
+                        that.$Message.error('表单验证失败!');
                         setTimeout(() => {
-                            this.loading = false;
-                            this.$nextTick(() => {
-                                this.loading = true
+                            that.loading = false;
+                            that.$nextTick(() => {
+                                that.loading = true
                             })
                         },1000)
                     }

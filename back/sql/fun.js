@@ -1,5 +1,5 @@
 let mysql = require('mysql');
-let db = require('../configs/db');
+let db = require('../config/db');
 let pool = mysql.createPool(db);
 
 
@@ -32,12 +32,6 @@ module.exports  = {
 
             callback(err,results,fields);
 
-        }),
-    },
-   
-
-
-
-    
-    
+        })
+    }
 }

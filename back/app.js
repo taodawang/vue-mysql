@@ -8,8 +8,6 @@ let port = process.env.PORT || 9999;
 var app = express();
 app.use(bodyParse.json());
 app.use(bodyParse.urlencoded({extended:false}));
-
-
 app.use(router);
 
 

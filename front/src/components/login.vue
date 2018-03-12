@@ -54,9 +54,39 @@
                         })
             },
             handleSubmit(name) {
+                let that = this;
                 this.$refs[name].validate((valid) => {
                     if (valid) {
-                        this.$Message.success('Success!');
+                        let qs = require('qs')
+                        that.axios({
+                            url:'/api/login',
+                            method:'post',
+                            data:qs.stringify(that.formCustom)
+                            //params : that.formCustom
+                        })
+                        .then(res=>{
+                            let needData = res.data;
+                            if (needData.code == 200) {
+                                that.$Message.success(needData.msg)
+                            } else {
+                                that.$Message.error(needData.msg);
+                                setTimeout(() => {
+                                    that.loading = false;
+                                    that.$nextTick(() => {
+                                        that.loading = true
+                                    })
+                                },1000)
+                            }
+                        })
+                        .catch(err=>{
+                            this.$Message.error('网络请求异常');
+                            setTimeout(() => {
+                                that.loading = false;
+                                that.$nextTick(() => {
+                                    that.loading = true
+                                })
+                            },1000)
+                        })
                     } else {
                         this.$Message.error('表单验证失败!');
                         setTimeout(() => {
