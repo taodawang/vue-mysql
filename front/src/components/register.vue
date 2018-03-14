@@ -24,6 +24,28 @@
 <script>
     export default {
         data () {
+            const validatepassword = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('密码不能为空'));
+                } else {
+                    if (this.formCustom.passwdCheck !== '') {
+                        // 对第二个密码框单独验证
+                        this.$refs.form.validateField('password2');
+                    }
+                    callback();
+                }
+            };
+            const validatepassword2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('密码不能为空'));
+                } else if (value !== this.formCustom.password) {
+                    callback(new Error('两次密码输入不一致'));
+                } else {
+                    callback();
+                }
+
+            };
+
             return {
                 flag : false,
                 modal1: true,
@@ -39,13 +61,16 @@
                         {required:true, message: '用户名不能为空', trigger: 'blur' }
                     ],
                     password: [
-                        {required:true, message: '密码不能为空', trigger: 'blur' }
+                        {validator:validatepassword, trigger: 'blur' }
                     ],
                     password2: [
-                        {required:true, message: '密码不能为空', trigger: 'blur' }
+                        {validator:validatepassword2, trigger: 'blur' }
                     ],
                 },
             }
+        },
+        mounted(){
+            console.log(this.$route.params)
         },
         methods: {
             cancel () {
@@ -59,6 +84,7 @@
                     if (valid) {
                         let postData = that.formCustom;
                         let qs = require('qs');
+                    
                         that.axios({
                             url:'/api/register',
                             method:'post',

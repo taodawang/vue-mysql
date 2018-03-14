@@ -49,9 +49,9 @@
                 this.$Message.info('Clicked cancel');
             },
             signUp() {
-                 this.$router.push({
-                            name : 'register'
-                        })
+                this.$router.push({
+                    name : 'register',
+                })
             },
             handleSubmit(name) {
                 let that = this;
@@ -61,7 +61,7 @@
                         that.axios({
                             url:'/api/login',
                             method:'post',
-                            data:qs.stringify(that.formCustom)
+                            data:qs.stringify(Object.assign({},that.formCustom))
                             //params : that.formCustom
                         })
                         .then(res=>{
